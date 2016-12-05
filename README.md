@@ -78,8 +78,8 @@ Boot process with OPAL encrypted drive:
  2. Start `isolinux` from shadow MBR
  3. Run minimal Linux system, `init` script takes over
  4. `init` calls sedutil to unlock the drive and unhide the normal partitions
- 5a. Either: Reboot back to UEFI/BIOS
- 5b. Or: `init` mounts `/boot`
+ 5. (a) Either: Reboot back to UEFI/BIOS
+    (b) Or: `init` mounts `/boot`
  6. Pass execution on to `/boot/boot.sh`
  7. `boot.sh` loads a kernel and initramfs from `/boot` (`kexec -l`)
  8. `boot.sh` runs `kexec -e` to launch the full Linux system
