@@ -89,7 +89,8 @@ Boot flags/kernel command-line
 
 `init` handles only one command line option:
 
- - `boot=/dev/nvme0n1p1` - mount /dev/nvme0n1p1 as /boot before attempting to run /boot/boot.sh (at step 5b above)
+ - `boot=/dev/nvme0n1p1` - mount /dev/nvme0n1p1 as /boot before attempting to
+   run /boot/boot.sh (at step 5b above)
  - `boot=reboot` - reboot system after unlocking (at step 5a above)
 
 The example `boot.sh` handles some more options:
@@ -97,6 +98,36 @@ The example `boot.sh` handles some more options:
  - `kernel=FILENAME` - specify kernel filename to pass to kexec
  - `root=/dev/sda1` - specify root= option to pass to kexec'd kernel
  - `shell=1` - stop in an emergency shell before running `kexec -e`
+
+
+Building initramfs and disk image
+---------------------------------
+
+This is not scripted (yet, feel free to provide one), below is an outline on how
+to generate an image.
+
+1. Create a local tree with all files for the initramfs
+2. `find . -print0 | cpio --null -ov --format=newc > ../unlock.cpio`
+3. `xz -9 -C crc32 unlock.cpio`
+4. `dd if=/dev/zero of=opal.gptdisk bs=1M count=32`
+5. `gdisk opal.gptdisk`
+    - Create new partition table
+    - Create new partition, default extents (whole "disk")
+    - Type EF00
+    - Set a parition name (might show up in the UEFI firmware boot menu)
+    - `o`
+    - `n` `[enter],[enter],[enter]`
+    - `t` `EF00`
+    - `c` `Unlock drive`
+6. `mount $(losetup -f --show -o 1048576 opal.gptdisk) /mnt/opal`
+7. Copy `bootdisk/EFI` to `/mnt/opal/EFI` (syslinux installation)
+8. Copy isolinux `bootx64.efi` and `ldlinux.e64` to `/mnt/opal/EFI/Boot/`
+9. Put a known good kernel at `/mnt/opal/EFI/Boot/bzImage`
+10. Place `unlock.cpio.xz` at `/mnt/opal/EFI/Boot/unlock.cpio.xz`
+11. `umount /mnt/opal`
+
+It is also possible to start with the LinuxPBA image instead of an empty image,
+mount it, and replace the syslinux.cfg, kernel bzImage, and initramfs.
 
 Testing
 -------
