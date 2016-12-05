@@ -135,6 +135,24 @@ Building sedutil-cli as a static binary
 Use the patch in `patches/sedutil-static.patch` to build sedutil-cli as a static
 binary.
 
+Setting up `/boot`
+------------------
+
+Place `boot.sh` and `warm-boot-conf.sh` in `/boot`. Modify `warm-boot-conf.sh`
+with any settings you might need. The default behaviour is to let `boot.sh`
+search the whole `/boot` disk for any kernels and pick the one with the newest
+file modification date, which is most often the one we want to run.
+
+Loading the PBA image into the shadow MBR
+-----------------------------------------
+
+With the drive unlocked:
+
+    sedutil-cli --loadPBAimage password /path/to/opal.gptdisk /dev/nvme0n1
+
+This takes a long time (several minutes for a few megabytes). Make a smaller
+drive image (`dd` step above) if you want it to go faster.
+
 Testing
 -------
 This has been tested on a single machine, with an Intel 6000p NVMe drive
