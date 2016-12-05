@@ -1,0 +1,19 @@
+commit 842cd515635382e453d211474a8795f8327d655e
+Author: Joakim Nohlgård <joakim.nohlgard@eistec.se>
+Date:   Mon Dec 5 23:56:49 2016 +0100
+
+    CLI: Build static binary
+
+diff --git a/linux/CLI/nbproject/Makefile-Release_x86_64.mk b/linux/CLI/nbproject/Makefile-Release_x86_64.mk
+index 7023911..5b3b939 100644
+--- a/linux/CLI/nbproject/Makefile-Release_x86_64.mk
++++ b/linux/CLI/nbproject/Makefile-Release_x86_64.mk
+@@ -73,7 +73,7 @@ FFLAGS=-Wall
+ ASFLAGS=
+ 
+ # Link Libraries and Options
+-LDLIBSOPTIONS=
++LDLIBSOPTIONS=-static -static-libgcc -static-libstdc++
+ 
+ # Build Targets
+ .build-conf: ${BUILD_SUBPROJECTS}
