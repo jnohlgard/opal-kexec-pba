@@ -129,6 +129,12 @@ to generate an image.
 It is also possible to start with the LinuxPBA image instead of an empty image,
 mount it, and replace the syslinux.cfg, kernel bzImage, and initramfs.
 
+Building sedutil-cli as a static binary
+---------------------------------------
+
+Use the patch in `patches/sedutil-static.patch` to build sedutil-cli as a static
+binary.
+
 Testing
 -------
 This has been tested on a single machine, with an Intel 6000p NVMe drive
