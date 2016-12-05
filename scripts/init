@@ -1,0 +1,61 @@
+#!/bin/busybox sh
+# minimal init for opal unlock
+
+# Copyright (C) 2016  Joakim Nohlgård
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+cmdline() {
+    local value
+    value=" $(cat /proc/cmdline) "
+    value="${value##* $1=}"
+    value="${value%% *}"
+    [ "$value" != "" ] && echo "$value"
+}
+
+# Create symlinks for all busybox commands
+echo "Setting up BusyBox symlinks"
+/bin/busybox --install -s
+
+echo "Mounting devtmpfs on /dev"
+mount -t devtmpfs devtmpfs /dev
+
+# Mount the /proc and /sys filesystems.
+echo "Mounting /proc"
+mount -t proc proc /proc
+echo "Mounting /sys"
+mount -t sysfs sysfs /sys
+
+# Unlock and unhide an OPAL drive
+echo "Unlock OPAL"
+/opal-unlock
+
+if [ -z "$(cmdline boot)" -o "$(cmdline boot)" = "reboot" ]; then
+    echo "Rebooting to resume system start up"
+    umount -a -r
+    reboot
+fi
+# Mount /boot filesystem
+BOOTFS=$(findfs $(cmdline boot))
+echo "Mount ${BOOTFS} on /boot"
+mount -o ro ${BOOTFS} /boot
+
+# Clean up, this will be done by /boot/boot.sh
+#umount /proc
+#umount /sys
+#umount /dev
+
+# Boot the real thing.
+#exec switch_root /mnt/root /sbin/init
+# Run boot script in /boot
+echo "Hand-off to /boot/boot.sh"
+exec /boot/boot.sh
