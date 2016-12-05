@@ -1,5 +1,11 @@
+opal-kexec-pba
+==============
+
+Alternative OPAL SED unlock image for pre-boot authentication (alternative to
+LinuxPBA).
+
 Introduction
-============
+------------
 
 This repository contains some scripts for creating an initramfs and boot image
 to use as a PBA image on OPAL encrypted hard disk and solid state drives.
@@ -8,6 +14,15 @@ See
 [Drive-Trust-Alliance/sedutil](https://github.com/Drive-Trust-Alliance/sedutil)
 for a more detailed explanation of self-encrypting drives (SED) and how to use
 them with Linux.
+
+Disclaimer
+----------
+
+These scripts have only been tested on a single machine, with a specific NVME
+SED device, under UEFI. I won't be able to help you if it bricks your drive,
+nor will I take any responsibility for any errors or flaws in the scripts which
+may lead to ruined hard drives, leaked passwords or data, or anything other bad
+things.
 
 Features
 --------
@@ -129,6 +144,8 @@ to generate an image.
 It is also possible to start with the LinuxPBA image instead of an empty image,
 mount it, and replace the syslinux.cfg, kernel bzImage, and initramfs.
 
+The image generated above will only work on UEFI systems.
+
 Building sedutil-cli as a static binary
 ---------------------------------------
 
@@ -156,7 +173,7 @@ drive image (`dd` step above) if you want it to go faster.
 Testing
 -------
 This has been tested on a single machine, with an Intel 6000p NVMe drive
-(SSDPEKKF512G7).
+(SSDPEKKF512G7), using UEFI boot, Secure Boot disabled.
 I am using an image with these scripts as the primary unlock method on that
 machine and have been using this for a few weeks now (2016-12-05).
 
