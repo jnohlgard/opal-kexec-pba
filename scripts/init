@@ -41,7 +41,8 @@ echo "Unlock OPAL"
 
 if [ -z "$(cmdline boot)" -o "$(cmdline boot)" = "reboot" ]; then
     echo "Rebooting to resume system start up"
-    reboot
+    reboot -f
+    sh
 fi
 # Mount /boot filesystem
 BOOTFS=$(findfs $(cmdline boot))
